@@ -1,0 +1,28 @@
+{ 
+  "reloadTime": 1800,
+  "defaultState": "noise",
+  "states": {
+    "noise": {
+    	"sources": ["noise"], 
+    	"duration": {
+	    	"x": "normal",
+	    	"params": [60, 1]
+    	},
+    	"nextStates": ["noise"]	    
+    }
+    
+  }, 
+  "sources": {
+  	"noise": { 
+      "samples": ["noise.wav"],
+      "delay": {
+      	"x": "normal",
+      	"params": [0.5, 0.1]
+      },
+      "volume": {
+      	"x": "normal",
+      	"params": [0.07, 0.03]
+      }
+    }
+  }
+}

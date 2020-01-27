@@ -1,0 +1,92 @@
+{
+    "gain": 1.5,
+    "reloadTime": 1800,
+    "defaultState": "major",
+    "states": {
+        "minor": {
+            "sources": ["key_slow", "minor"],
+            "duration": {
+                "x": "normal",
+                "params": [10, 0]
+            },
+            "nextStates": ["major"]
+        },
+
+        "major": {
+            "sources": ["key", "major"],
+            "duration": {
+                "x": "normal",
+                "params": [10, 0]
+            },
+            "nextStates": ["other"]
+        },
+
+        "other": {
+            "sources": ["key", "other"],
+            "duration": {
+                "x": "normal",
+                "params": [10, 0]
+            },
+            "nextStates": ["minor"]
+        }
+
+    },
+    "sources": {
+        "key": {
+            "samples": ["sounds/c3.wav", "sounds/c4.wav", "sounds/c5.wav", "sounds/c6.wav", "sounds/c7.wav", "sounds/g4.wav", "sounds/g5.wav", "sounds/g6.wav"],
+            "delay": {
+                "x": "normal",
+                "params": [0.5, 0.03]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.15, 0.05]
+            }
+        },
+        "key_slow": {
+            "samples": ["sounds/c3.wav", "sounds/c4.wav", "sounds/c5.wav", "sounds/c6.wav", "sounds/c7.wav", "sounds/g4.wav", "sounds/g5.wav", "sounds/g6.wav"],
+            "delay": {
+                "x": "chisquare",
+                "params": [0.75]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.15, 0.05]
+            }
+        },
+        "minor": {
+            "samples": ["sounds/d6sharp.wav"],
+            "delay": {
+                "x": "chisquare",
+                "params": [3]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.05, 0.05]
+            }
+        },
+        "major": {
+            "samples": ["sounds/e5.wav", "sounds/e6.wav"],
+            "delay": {
+                "x": "chisquare",
+                "params": [2]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.2, 0.2]
+            }
+        },
+        "other": {
+            "samples": ["sounds/g4sharp.wav", "sounds/a4sharp.wav", "sounds/a6sharp.wav"],
+            "delay": {
+                "x": "chisquare",
+                "params": [1]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.1, 0.1]
+            }
+        }
+
+    }
+}
