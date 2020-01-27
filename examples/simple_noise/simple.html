@@ -10,10 +10,10 @@
 
 
 <body>
-    Plays surround noise from all available speakers (startup is delayed with 60 seconds)
 	<script type="text/javascript">
 		var player = new WebAudioTemplatePlayer();
 		player.loadTemplate("simple.json");
 	</script>
+	<button onclick="player.context.resume()">start</button>
 </body>
 </html>
