@@ -1,0 +1,98 @@
+{
+    "reloadTime": 1800,
+    "states": {
+        "forest": {
+            "sources": ["birdies", "blackbird", "wind"],
+            "duration": {
+                "x": "normal",
+                "params": [120, 1]
+            },
+            "nextStates": ["ocean"]
+        },
+        "ocean": {
+            "sources": ["surf", "seagulls"],
+            "duration": {
+                "x": "normal",
+                "params": [120, 1]
+            },
+            "nextStates": ["thunder"]
+        },
+        "thunder": {
+            "sources": ["thunder"],
+            "duration": {
+                "x": "normal",
+                "params": [120, 1]
+            },
+            "nextStates": ["forest"]
+        }
+    },
+    "sources": {
+        "thunder": {
+            "samples": ["sounds/lennyboy/rain-thunder.mp3", "sounds/svampen/thunder-rolling-1.mp3", "sounds/svampen/thunder-rolling-2.mp3", "sounds/svampen/thunder-rolling-3.mp3", "sounds/svampen/thunder-distant-w-rain-1.mp3"],
+            "delay": {
+                "x": "normal",
+                "params": [7, 3]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.0, 0.01]
+            }
+        },
+        "wind": {
+            "samples": ["sounds/dobroide/wind-light.mp3"],
+            "delay": {
+                "x": "normal",
+                "params": [1, 0.5]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.0, 0.01]
+            }
+        },
+        "surf": {
+            "samples": ["sounds/dobroide/surf.mp3"],
+            "delay": {
+                "x": "normal",
+                "params": [10, 5]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.01, 0.01]
+            }
+        },
+        "seagulls": {
+            "samples": ["sounds/juskiddink/seagulls.mp3"],
+            "delay": {
+                "x": "normal",
+                "params": [20, 5]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.002, 0.002]
+            }
+        },
+        "birdies": {
+            "samples": ["sounds/dobroide/1.mp3", "sounds/dobroide/2.mp3", "sounds/dobroide/3.mp3", "sounds/dobroide/4.mp3", "sounds/dobroide/7.mp3", "sounds/dobroide/8.mp3", "sounds/dobroide/1.mp3", "sounds/dobroide/9.mp3", "sounds/dobroide/10.mp3", "sounds/dobroide/11.mp3", "sounds/dobroide/18.mp3", "sounds/dobroide/22.mp3", "sounds/dobroide/23.mp3", "sounds/dobroide/24.mp3", "sounds/dobroide/25.mp3", "sounds/dobroide/26.mp3"],
+            "delay": {
+                "x": "normal",
+                "params": [2, 2]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.0, 0.005]
+            }
+        },
+        "blackbird": {
+            "samples": ["sounds/blackbird/1.mp3", "sounds/blackbird/2.mp3", "sounds/blackbird/3.mp3", "sounds/blackbird/4.mp3", "sounds/blackbird/5.mp3", "sounds/blackbird/6.mp3", "sounds/blackbird/7.mp3", "sounds/blackbird/8.mp3", "sounds/blackbird/9.mp3", "sounds/blackbird/10.mp3", "sounds/blackbird/11.mp3", "sounds/blackbird/12.mp3", "sounds/blackbird/13.mp3", "sounds/blackbird/14.mp3", "sounds/blackbird/15.mp3", "sounds/blackbird/16.mp3", "sounds/blackbird/17.mp3", "sounds/blackbird/18.mp3", "sounds/blackbird/19.mp3", "sounds/blackbird/20.mp3", "sounds/blackbird/21.mp3", "sounds/blackbird/22.mp3", "sounds/blackbird/23.mp3", "sounds/blackbird/24.mp3", "sounds/blackbird/25.mp3", "sounds/blackbird/26.mp3", "sounds/blackbird/27.mp3", "sounds/blackbird/28.mp3", "sounds/blackbird/29.mp3", "sounds/blackbird/30.mp3", "sounds/blackbird/31.mp3", "sounds/blackbird/32.mp3"],
+            "delay": {
+                "x": "normal",
+                "params": [3, 3]
+            },
+            "volume": {
+                "x": "normal",
+                "params": [0.0, 0.0002]
+            }
+        }
+
+    }
+}
