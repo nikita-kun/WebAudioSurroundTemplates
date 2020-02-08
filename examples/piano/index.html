@@ -29,7 +29,7 @@
 		player.loadTemplate("piano.json", true, override);
 	</script>
 	
-	<button onclick="player.context.resume()">start</button>
+	<button onclick="player.context.resume(); player.gotoState('major');">start</button>
 	
 	<br>
 	<IFRAME id="readme" src="./piano.json" width="100%" height="600"></IFRAME>

@@ -1,6 +1,5 @@
 {
     "reloadTime": 1800,
-    "defaultState": "noise",
     "states": {
         "noise": {
             "sources": ["noise"],

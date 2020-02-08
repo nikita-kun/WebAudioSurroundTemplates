@@ -29,7 +29,7 @@
 		player.loadTemplate("channel_test.json", true, override);
 	</script>
 	
-	<button onclick="player.context.resume();">start</button>
+	<button onclick="player.context.resume(); player.gotoState('start')">start</button>
 	
 	<br>
 	<IFRAME id="readme" src="./channel_test.json" width="100%" height="600"></IFRAME>

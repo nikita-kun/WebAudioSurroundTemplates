@@ -2,7 +2,6 @@
     "gain": 1.5,
     "debug": 1,
     "reloadTime": 1800,
-    "defaultState": "start",
     "states": {
         "start": {
             "sources": ["multichannel_note"],

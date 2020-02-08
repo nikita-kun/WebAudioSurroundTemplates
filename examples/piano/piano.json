@@ -1,7 +1,6 @@
 {
     "gain": 1.5,
     "reloadTime": 1800,
-    "defaultState": "major",
     "states": {
         "minor": {
             "sources": ["key_slow", "minor"],
