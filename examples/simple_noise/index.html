@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<title>Noise: WebAudioSurroundTemplates</title>
+    <script type="text/javascript" src="../../lib/jstat.1.9.2.min.js"></script>
+    <script type="text/javascript" src="../../js/WebAudioSurroundTemplates.js"></script>
+</head>
+
+<body>
+	<h2><a href="https://github.com/nikita-kun/WebAudioSurroundTemplates">WebAudioSurroundTemplates</a></h2>
+	This example plays noise on every available channel.
+	
+	<script type="text/javascript">
+		var player = new WebAudioSurroundTemplates();
+		player.loadTemplate("simple.json");
+	</script>
+	<button onclick="player.context.resume()">start</button>
+	
+	<br>
+	<IFRAME id="readme" src="./simple.json" width="100%" height="600"></IFRAME>
+</body>
+</html>

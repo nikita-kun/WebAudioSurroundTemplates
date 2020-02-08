@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<title>channel_test: WebAudioSurroundTemplates</title>
+	<script type="text/javascript" src="../../lib/jstat.1.9.2.min.js"></script>
+	<script type="text/javascript" src="../../js/WebAudioSurroundTemplates.js"></script>
+	<script type="text/javascript">
+	function getUrlParam(name) {
+		var params = {};
+		var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+			params[key] = value;
+		});
+		return params[name];
+	}
+	</script>
+</head>
+
+<body>
+	<h2><a href="https://github.com/nikita-kun/WebAudioSurroundTemplates">WebAudioSurroundTemplates</a></h2>
+	This example plays a sequence of sounds on different channels.
+	
+	<script type="text/javascript">
+		var override = {};
+		if (getUrlParam("override"))
+			override = JSON.parse(decodeURI(getUrlParam("override")));
+		var player = new WebAudioSurroundTemplates();
+		player.loadTemplate("channel_test.json", true, override);
+	</script>
+	
+	<button onclick="player.context.resume();">start</button>
+	
+	<br>
+	<IFRAME id="readme" src="./channel_test.json" width="100%" height="600"></IFRAME>
+</body>
+</html>

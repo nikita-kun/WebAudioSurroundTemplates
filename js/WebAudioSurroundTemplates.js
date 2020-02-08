@@ -1,8 +1,5 @@
-Array.prototype.random = function() {
-    return this[Math.floor(Math.random() * this.length)];
-}
+class WebAudioSurroundTemplates {
 
-class WebAudioTemplatePlayer {
     constructor(debug = false, channelCount = undefined) {
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -18,31 +15,78 @@ class WebAudioTemplatePlayer {
             } else {
                 this.channelCount = this.context.destination.channelCount;
             }
-            console.log("WebAudioTemplatePlayer Initializing. Channels: " + this.channelCount + ". Sample rate: " + this.context.sampleRate);
+
+            this.debugOutput("WebAudioSurroundTemplates Initializing. Channels: " + this.channelCount + ". Sample rate: " + this.context.sampleRate, true);
+
             this.merger = this.context.createChannelMerger(this.channelCount);
             this.merger.connect(this.context.destination);
             this.buffers = {};
+            
             this.pause = false;
-            this.reloadTime = 100000000000;
+            this.stateTimeout = null;
+            this.reloadTime = null;
+
+            this.schedule = null;
+            this.scheduleUpdateRateSeconds = 1;
+            this.scheduleTimeout = null;
 
         } catch (err) {
-            console.error("WebAudioTemplatePlayer failed to Initialize", err);
+            console.error("WebAudioSurroundTemplates failed to Initialize", err);
         }
 
     }
 
+    static randomArrayElement(a) {
+        return a[Math.floor(Math.random() * a.length)];
+    }
+
+    debugOutput(o, forceOutput = false) {
+        if (this.debug || forceOutput)
+            console.log(o);
+    }
+
+    setSchedule(schedule) {
+        this.schedule = schedule
+        clearTimeout(this.scheduleTimeout)
+        this.scheduleTimeout = setTimeout(() => {
+            this.scheduleTick();
+        }, this.scheduleUpdateRateSeconds * 1000);
+    }
+
+    scheduleTick() {
+        var dateString = new Date().toLocaleString('en-US', {"hour12": false});
+        this.debugOutput("Schedule tick: " + dateString);
+        if (!this.schedule) {
+            return;
+        }
+
+        this.scheduleTimeout = setTimeout(() => {
+            this.scheduleTick();
+        }, this.scheduleUpdateRateSeconds * 1000);
+
+        var schedule = this.template.schedules[this.schedule];
+        for (var entry in schedule) {
+            if (schedule.hasOwnProperty(entry) && dateString.includes(entry)) {
+                this.debugOutput("Schedule HIT: " + entry);
+                this.gotoState(WebAudioSurroundTemplates.randomArrayElement(schedule[entry]));
+            }
+        }
+    }
+
     reloadContext() {
-        if (this.debug)
-            console.log("Trying to restart the context");
+        this.debugOutput("Trying to restart the context");
+
         try {
             this.context.suspend();
             this.context.resume();
         } catch (err) {
 
         }
-        setTimeout(() => {
-            this.reloadContext()
-        }, this.reloadTime * 1000);
+        
+        if (this.reloadTime)
+	        setTimeout(() => {
+	            this.reloadContext()
+	        }, this.reloadTime * 1000);
     }
 
     loadTemplate(url, runDefault = true, overrideParameters = {}) {
@@ -63,14 +107,23 @@ class WebAudioTemplatePlayer {
                 player.reloadTime = template.reloadTime;
                 player.reloadContext();
             }
+
+            if (template.scheduleUpdateRateSeconds)
+                player.scheduleUpdateRateSeconds = template.scheduleUpdateRateSeconds;
+
+            if (template.defaultSchedule)
+                player.setSchedule(template.defaultSchedule);
+
             if (template.gain)
                 player.gain = template.gain;
+
             if (template.debug)
                 player.debug = true;
+
             if (player.runDefault && template.defaultState)
                 player.gotoState(template.defaultState);
 
-            console.log("Loading the template", url, template);
+            this.debugOutput("Loading the template: " + url);
             player = null;
         });
     }
@@ -97,15 +150,16 @@ class WebAudioTemplatePlayer {
         if (source.scheduled) {
             return;
         }
+
         source.scheduled = true;
         var delay = jStat[source.delay.x].sample(...source.delay.params) * 1000;
+
         setTimeout(() => {
             this.emitSource(sourceName, true);
             source = null;
             delay = null;
         }, delay);
     }
-
 
     stopSource(sourceName) {
         return this.template.sources[sourceName].pause = true;
@@ -116,25 +170,25 @@ class WebAudioTemplatePlayer {
     }
 
     getRandomChannelForSource(source) {
-        return Array.isArray(source.channels) ? source.channels.random() : Math.floor(jStat.uniform.sample(0, this.channelCount));
+        return Array.isArray(source.channels) ? WebAudioSurroundTemplates.randomArrayElement(source.channels) : Math.floor(jStat.uniform.sample(0, this.channelCount));
     }
 
     emitSource(sourceName, trigger = false) {
         var source = this.template.sources[sourceName];
-        var sample = source.samples.random();
-
+        var sample = WebAudioSurroundTemplates.randomArrayElement(source.samples);
         var bufferSource = this.context.createBufferSource();
         var gainNode = this.context.createGain();
+
         try {
             gainNode.channelCount = this.buffers[sample].numberOfChannels;
             gainNode.channelCountMode = 'explicit';
             gainNode.gain.value = this.gain * jStat[source.volume.x].sample(...source.volume.params);
+
             bufferSource.buffer = this.buffers[sample];
             bufferSource.connect(gainNode);
 
             var splitter = this.context.createChannelSplitter(gainNode.channelCount);
             gainNode.connect(splitter);
-
 
             if (source.multichannel) {
                 if (source.channels) {
@@ -166,43 +220,61 @@ class WebAudioTemplatePlayer {
                 sample = null;
             }, 2 * bufferSource.buffer.duration);
         } catch (err) {
-            if (this.debug)
-                console.log("Failed to emit source: " + sourceName, err);
+            this.debugOutput("Failed to emit source: " + sourceName + "(" + err + ")");
         }
 
         source.scheduled = false;
-        if (this.debug)
-            console.log(sourceName, sample, "volume=" + gainNode.gain.value);
+        this.debugOutput(sourceName + " " + sample + " volume=" + gainNode.gain.value);
 
         if (!source.pause && trigger)
             this.triggerSource(sourceName);
+
     }
 
+    gotoState(stateName = null) {
+        this.stopSources();
 
-    gotoState(stateName) {
-        this.pause = false;
+        if (this.stateTimeout) {
+            clearTimeout(this.stateTimeout);
+            this.stateTimeout = null;
+        }
+
+        if (!stateName) {
+            if (this.nextState) {
+                stateName = this.nextState;
+            } else {
+                this.debugOutput("Next state undefined. Paused.");
+                this.pause = true;
+                return;
+            }
+
+        }
+
+        this.pause = false
         this.state = stateName;
         var state = this.template.states[stateName];
+        this.nextState = WebAudioSurroundTemplates.randomArrayElement(state.nextStates);
+
         var duration = jStat[state.duration.x].sample(...state.duration.params) * 1000;
-        if (this.debug)
-            console.log("state: " + stateName + " (" + duration + " ms)");
+
+        this.debugOutput("State: " + stateName + " (" + duration + " ms)");
+
         state.sources.forEach(this.triggerSource, this);
-        setTimeout(() => {
+        this.stateTimeout = (setTimeout(() => {
             this.stopSources();
             if (!this.pause)
-                this.gotoState(state.nextStates.random());
-            else {
-                console.log("state: none");
-            }
-        }, duration);
+                this.gotoState();
+            else
+                this.debugOutput("state: none");
+        }, duration));
     }
 
     loopState(stateName) {
         this.pause = false;
         this.state = stateName;
+        this.nextState = stateName;
         var state = this.template.states[stateName];
-        if (this.debug)
-            console.log("state: " + stateName + " (loop)");
+        this.debugOutput("state: " + stateName + " (loop)");
         state.sources.forEach(this.triggerSource, this);
     }
 
@@ -222,7 +294,7 @@ class WebAudioTemplatePlayer {
         player.buffers[sampleUrl] = fetch(sampleUrl).then(
             this.resolveResponseArrayBuffer,
             () => {
-                throw ("Failed to open a sample: " + sampleUrl)
+                throw ("Failed to open a sample: " + sampleUrl);
             }
         ).then(
             (sampleData) => {
@@ -233,7 +305,7 @@ class WebAudioTemplatePlayer {
                             player = null;
                         },
                         () => {
-                            throw ("Failed to interpret a sample: " + sampleUrl)
+                            throw ("Failed to interpret a sample: " + sampleUrl);
                         }
                     )
                 } catch (err) {
